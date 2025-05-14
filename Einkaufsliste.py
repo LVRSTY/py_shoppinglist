@@ -117,17 +117,17 @@ def modeTwo():
             print(f"\n{Fore.RED}{itemToRemove} wurde entfernt!\n")
             saveList()
 
-
-#Main Programm
-if checkListEmpty() == True:
-    modeOne()
-else:
-    while True:    
+while True:    
+    if checkListEmpty() == True:
+        modeOne()
+    else:
         mode = selectMode()
         if mode == "1":
             modeOne()
         elif mode == "2":
             modeTwo()
+        elif mode == "3":
+            print(f"{Fore.RED}Dieser Modus ist noch nicht verfügbar!")
         elif mode == "X":
             print("Programm wird beendet.")
             break
