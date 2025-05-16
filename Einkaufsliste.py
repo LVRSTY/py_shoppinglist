@@ -1,7 +1,7 @@
 #import
-import questionary
 import json
 import os
+from InquirerPy import inquirer
 from colorama import init, Fore, Style
 init(autoreset=True)
 
@@ -25,7 +25,7 @@ items = itemList["items"]
 #Liste ausgeben
 def showList():
     print(f"{Fore.CYAN}="* 40)
-    print("Hier ist deine aktuelle Einkaufsliste:")
+    print("Hier ist deine aktuelle Einkaufsliste:\n")
     for item in items:
         print(item)
     #print("\n")
@@ -40,7 +40,6 @@ def saveList():
 def checkListEmpty():
     return len(itemList["items"]) == 0
 
-
 #Modus wählen
 def selectMode():
     print(f"{Fore.GREEN}="* 40)
@@ -48,86 +47,58 @@ def selectMode():
     print(f"{Fore.GREEN}="* 40)
     #mode_number = "0"
     #if mode_number == "0":
-    mode = questionary.select(
-        "Wähle einen Modus aus:\n",
-        choices=["1. Eingabemodus", "2. Ansichtsmodus", "3. Bearbeitungsmodus", "X. Beenden"]
-    ).ask()
+    mode = inquirer.select(
+        message="Wähle einen Modus aus:\n",
+        choices=["1. Eingabemodus", "2. Einkaufsmodus", "3. Bearbeitungsmodus", "X. Beenden"]
+    ).execute()
     mode_number = mode.split('.', 1)[0]
     return mode_number
 
 #Eingabe Modus
 def modeOne():
-    addAnotherItem = True
-    while addAnotherItem == True:
-        addedItem = input(f"{Fore.YELLOW}Was willst du auf die Einkaufsliste setzen?\n")
-        if addedItem not in itemList["items"]:
-            itemList["items"].append(addedItem)
-            saveList()
-            showList()
-            addAnotherQuestion = questionary.select(
-                "Möchtest du ein weiteren Artikel auf deine Einkaufsliste setzen?\n",
-                choices=["Ja", "Nein"]
-            ).ask()
-            if addAnotherQuestion == "Ja":
-                addAnotherItem = True
-            elif addAnotherQuestion == "Nein":
-                addAnotherItem = False
+    print(f"{Fore.GREEN}\nWillkommen im Eingabemodus\n")
+    try:
+        while True:
+            addedItem = input(f"{Fore.YELLOW}Was willst du auf die Einkaufsliste setzen? (Ctrl + C zum Beenden)\n")
+            if addedItem not in itemList["items"]:
+                itemList["items"].append(addedItem)
+                saveList()
                 showList()
-        else:
-            print(f"{Fore.RED}Dieser Artikel befindet sich schon auf deiner Einkaufsliste!\n")
-            showList()
-            addAnotherQuestion = questionary.select(
-                "Möchtest du ein anderen Artikel auf deine Einkaufsliste setzen?\n",
-                choices=["Ja", "Nein"]
-            ).ask()
-            if addAnotherQuestion == "Ja":
-                addAnotherItem = True
-            elif addAnotherQuestion == "Nein":
-                addAnotherItem = False
+            else:
+                print(f"{Fore.RED}Dieser Artikel befindet sich schon auf deiner Einkaufsliste!\n")
                 showList()
+    except KeyboardInterrupt:
+        print("\n\nEingabe beendet!")
 
+#Einkaufsmodus
 def modeTwo():
-    print("Willkommen im Anzeigemodus\n")
+    print(f"{Fore.GREEN}\nWillkommen im Einkaufsmodus\n\n")
     if checkListEmpty() == True:
         print(f"{Fore.GREEN}Deine Liste ist leer!\n")
-    else:
-        showList()
-    stopShow = False
-    while stopShow == False:
-        wannaScratch = questionary.select(
-            "Bist du etwa einkaufen und möchtest Elemente von deiner Liste abhaken?",
-            choices=["Nein, ich will nur gucken.", "Ja, ich bin auf einem ShoppingSpree!"]
-        ).ask()
-        wannaScratchShort = wannaScratch.split(",", 1)[0]
-        if wannaScratchShort == "Nein":
-            showList()
-            endShow = questionary.select(
-                "Bist du fertig?",
-                choices=["Fertig!"]
-            ).ask()
-            if endShow == "Fertig!":
-                stopShow = True
-        elif wannaScratchShort == "Ja":
-            selectList = questionary.select(
-                "Hier ist deine aktuelle Liste:\nWähle einen Artikel aus, um ihn von deiner Liste zu streichen",
+    try:
+        while True:
+            selectList = inquirer.select(
+                message="Hier ist deine aktuelle Liste:\nWähle einen Artikel aus, um ihn von deiner Liste zu streichen (Ctrl + C zum Beenden)",
                 choices=itemList["items"]
-            ).ask()
+            ).execute()
             itemToRemove = selectList
             itemList["items"].remove(itemToRemove)
             print(f"\n{Fore.RED}{itemToRemove} wurde entfernt!\n")
             saveList()
+    except KeyboardInterrupt:
+        print("\nEinkaufsmodus beendet")
+            
 
-while True:    
-    if checkListEmpty() == True:
-        modeOne()
-    else:
+if checkListEmpty() == True:
+        print(f"{Fore.RED}\n***Deine Einkaufsliste ist noch leer!***\n")
+while True:
         mode = selectMode()
         if mode == "1":
             modeOne()
         elif mode == "2":
             modeTwo()
         elif mode == "3":
-            print(f"{Fore.RED}Dieser Modus ist noch nicht verfügbar!")
+            print(f"{Fore.RED}\nDieser Modus ist noch nicht verfügbar!\n")
         elif mode == "X":
             print("Programm wird beendet.")
             break
