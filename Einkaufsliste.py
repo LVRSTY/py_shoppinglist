@@ -21,7 +21,7 @@ else:
         json.dump(itemList, file, indent=2)
 items = itemList["items"]
 
-#Liste ausgeben
+#Liste anzeigen
 def showList():
     print(f"{Fore.CYAN}="* 40)
     print(f"{Fore.LIGHTBLUE_EX}Hier ist deine aktuelle Einkaufsliste:")
@@ -58,7 +58,9 @@ def modeAdd():
     try:
         while True:
             addedItem = input(f"{Fore.YELLOW}Was willst du auf deine Einkaufsliste schreiben? (Ctrl + C zum Beenden)\n")
-            if addedItem not in itemList["items"]:
+            if addedItem == "":
+                print(f"{Fore.RED}Du kannst keine 'leeren Artikel' auf die Einkaufsliste setzen")
+            elif addedItem not in itemList["items"]:
                 itemList["items"].append(addedItem)
                 saveList()
                 showList()
@@ -129,7 +131,7 @@ def modeEdit():
             elif "verwalten" in submenuSelect.lower():
                 listEditAction = inquirer.select(
                     message="Was möchtest du mit der Liste tun?",
-                    choices=["a) Liste leeren", "mehrere Artikel löschen", "c) Duplikate prüfen", "d) Liste alphabetisch sortieren"]
+                    choices=["a) Liste leeren", "b) mehrere Artikel löschen", "c) Duplikate prüfen", "d) Liste alphabetisch sortieren"]
                 ).execute()
                 if "leeren" in listEditAction.lower():
                     confirmListClear = inquirer.confirm(
@@ -137,7 +139,7 @@ def modeEdit():
                        default=False
                     ).execute()
                     if confirmListClear:
-                       print(f"Lösche alle Einträge...")
+                       print(f"{Fore.RED}\nLösche alle Einträge...")
                        itemList["items"] = []
                        saveList()
                     else:
