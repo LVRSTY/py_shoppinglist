@@ -5,21 +5,31 @@ from InquirerPy import inquirer
 from colorama import init, Fore, Style
 init(autoreset=True)
 
-#Öffne JSON File mit Items
-#Pfad des Scriptes herausfinden
-script_dir = os.path.dirname(os.path.abspath(__file__))
-#Absoluten Dateipfad erstellen
-file_path = os.path.join(script_dir, 'itemList.json')
-#Falls die Datei vorhanden ist - öffne sie
-if os.path.exists(file_path):
+#Liste Laden
+def loadList():
+    global itemList, items
     with open(file_path, 'r') as file:
         itemList = json.load(file)
+        items = itemList["items"]
+
+#Liste speichern
+def saveList():
+    with open(file_path, "w") as file:
+        json.dump(itemList, file, indent=2)
+
+#Pfad des Scriptes herausfinden
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+#Absoluten Dateipfad erstellen
+file_path = os.path.join(script_dir, 'itemList.json')
+
+#Falls die Datei vorhanden ist - öffne sie
+if os.path.exists(file_path):
+    loadList()
 #Falls die Datei nicht vorhanden ist - erstelle sie
 else:
     itemList = {"items": []}
-    with open(file_path, "w") as file:
-        json.dump(itemList, file, indent=2)
-items = itemList["items"]
+    saveList()
 
 #Liste anzeigen
 def showList():
@@ -28,11 +38,6 @@ def showList():
     for item in items:
         print(item)
     print(f"{Fore.CYAN}="* 40 + "\n")
-
-#Liste speichern
-def saveList():
-    with open(file_path, "w") as file:
-        json.dump(itemList, file, indent=2)
 
 #Liste auf Einträge überprüfen
 def checkListEmpty():
@@ -63,6 +68,7 @@ def modeAdd():
             elif addedItem not in itemList["items"]:
                 itemList["items"].append(addedItem)
                 saveList()
+                loadList()
                 showList()
             else:
                 print(f"{Fore.RED}Dieser Artikel befindet sich schon auf deiner Einkaufsliste!\n")
