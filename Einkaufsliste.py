@@ -48,8 +48,6 @@ def selectMode():
     print(f"{Fore.GREEN}="* 40)
     print(f"{Fore.GREEN}HAUPTMENUE:")
     print(f"{Fore.GREEN}="* 40)
-    #mode_number = "0"
-    #if mode_number == "0":
     mode = inquirer.select(
         message="Wähle einen Modus aus:\n",
         choices=["1. Eingabemodus", "2. Einkaufsmodus", "3. Bearbeitungsmodus", "X. Beenden"]
@@ -75,6 +73,7 @@ def modeAdd():
                 showList()
     except KeyboardInterrupt:
         print("\n\nEingabe beendet!")
+        showList()
 
 #Einkaufsmodus
 def modeShop():
@@ -184,7 +183,6 @@ while True:
         elif mode == "2":
             modeShop()
         elif mode == "3":
-#            print(f"{Fore.RED}\nDieser Modus ist noch nicht verfügbar!\n")
             modeEdit()
         elif mode == "X":
             print("Programm wird beendet.")
